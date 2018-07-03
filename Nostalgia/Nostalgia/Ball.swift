@@ -58,9 +58,10 @@ class Ball: SKSpriteNode
         self.physicsBody?.isDynamic = false
         self.physicsBody!.mass = 0.001
         self.physicsBody!.allowsRotation = false
-        self.physicsBody!.categoryBitMask = CollisionTypes.Ball.rawValue
-        self.physicsBody!.collisionBitMask = CollisionTypes.Rect.rawValue
-        self.physicsBody!.contactTestBitMask = CollisionTypes.Rope.rawValue
+        
+        self.physicsBody!.categoryBitMask = CategoryTypes.Ball.rawValue
+        self.physicsBody?.collisionBitMask = CollisionTypes.None.rawValue
+        self.physicsBody!.contactTestBitMask = CategoryTypes.Player.rawValue
     }
     
     /*

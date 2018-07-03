@@ -54,11 +54,12 @@
 		61917C9F204DDB9A006AC329 /* LeaderboardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61917C9E204DDB9A006AC329 /* LeaderboardCell.swift */; };
 		61AAB3692055BB8F0038AB47 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AAB3682055BB8F0038AB47 /* Ball.swift */; };
 		61AFCE4D2051CB8300ECAB95 /* JoystickSKcene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AFCE4C2051CB8300ECAB95 /* JoystickSKcene.swift */; };
-		61AFCE4F205282F500ECAB95 /* ScreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AFCE4E205282F500ECAB95 /* ScreeView.swift */; };
+		61AFCE4F205282F500ECAB95 /* ScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AFCE4E205282F500ECAB95 /* ScreenView.swift */; };
 		61BE787A2055DB0E00B4B629 /* Rope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BE78792055DB0E00B4B629 /* Rope.swift */; };
 		61C88F21204E9BA500FA7D89 /* iOSDevCenters+GIF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C88F20204E9BA500FA7D89 /* iOSDevCenters+GIF.swift */; };
 		61C88F23204E9C0000FA7D89 /* giphy.gif in Resources */ = {isa = PBXBuildFile; fileRef = 61C88F22204E9C0000FA7D89 /* giphy.gif */; };
 		61C88F25204ED8F600FA7D89 /* SetPlayerName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C88F24204ED8F600FA7D89 /* SetPlayerName.swift */; };
+		669ADC1720EAF6AB00D2D95B /* PowerUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669ADC1620EAF6AA00D2D95B /* PowerUp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -111,11 +112,12 @@
 		61917C9E204DDB9A006AC329 /* LeaderboardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardCell.swift; sourceTree = "<group>"; };
 		61AAB3682055BB8F0038AB47 /* Ball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
 		61AFCE4C2051CB8300ECAB95 /* JoystickSKcene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoystickSKcene.swift; sourceTree = "<group>"; };
-		61AFCE4E205282F500ECAB95 /* ScreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreeView.swift; sourceTree = "<group>"; };
+		61AFCE4E205282F500ECAB95 /* ScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenView.swift; sourceTree = "<group>"; };
 		61BE78792055DB0E00B4B629 /* Rope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rope.swift; sourceTree = "<group>"; };
 		61C88F20204E9BA500FA7D89 /* iOSDevCenters+GIF.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "iOSDevCenters+GIF.swift"; sourceTree = "<group>"; };
 		61C88F22204E9C0000FA7D89 /* giphy.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = giphy.gif; sourceTree = "<group>"; };
 		61C88F24204ED8F600FA7D89 /* SetPlayerName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPlayerName.swift; sourceTree = "<group>"; };
+		669ADC1620EAF6AA00D2D95B /* PowerUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerUp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -294,11 +296,12 @@
 				616BA709204DB9D600493787 /* HomeViewController.swift */,
 				615F79EA20502DA70001D20D /* MainMenuView.swift */,
 				61AFCE4C2051CB8300ECAB95 /* JoystickSKcene.swift */,
-				61AFCE4E205282F500ECAB95 /* ScreeView.swift */,
+				61AFCE4E205282F500ECAB95 /* ScreenView.swift */,
 				616BA753204DC50600493787 /* GameSKcene.swift */,
-				618C299920548A430011DE46 /* Player.swift */,
 				61AAB3682055BB8F0038AB47 /* Ball.swift */,
+				618C299920548A430011DE46 /* Player.swift */,
 				61BE78792055DB0E00B4B629 /* Rope.swift */,
+				669ADC1620EAF6AA00D2D95B /* PowerUp.swift */,
 				61C88F24204ED8F600FA7D89 /* SetPlayerName.swift */,
 				616BA6F6204DB99700493787 /* Main.storyboard */,
 				616BA6FC204DB99700493787 /* Assets.xcassets */,
@@ -384,7 +387,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = mskaline;
 				TargetAttributes = {
 					616BA6EE204DB99700493787 = {
@@ -451,6 +454,7 @@
 				61917C9F204DDB9A006AC329 /* LeaderboardCell.swift in Sources */,
 				6144402F2059E9970079CCE3 /* NSManagedObject.swift in Sources */,
 				614440252059E9970079CCE3 /* Entity.swift in Sources */,
+				669ADC1720EAF6AB00D2D95B /* PowerUp.swift in Sources */,
 				614440242059E9970079CCE3 /* Requestable.swift in Sources */,
 				6144401F2059E9970079CCE3 /* DirUtils.swift in Sources */,
 				614440302059E9970079CCE3 /* NSManagedObjectContext.swift in Sources */,
@@ -464,7 +468,7 @@
 				616BA74E204DC32800493787 /* SKJoystick.swift in Sources */,
 				614440272059E9970079CCE3 /* Context.swift in Sources */,
 				616BA752204DC32800493787 /* SKEase.swift in Sources */,
-				61AFCE4F205282F500ECAB95 /* ScreeView.swift in Sources */,
+				61AFCE4F205282F500ECAB95 /* ScreenView.swift in Sources */,
 				61AFCE4D2051CB8300ECAB95 /* JoystickSKcene.swift in Sources */,
 				616BA6FB204DB99700493787 /* Nostalgia.xcdatamodeld in Sources */,
 				616BA750204DC32800493787 /* EasingDeclarations.swift in Sources */,
@@ -517,6 +521,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -524,6 +529,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -574,6 +580,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -581,6 +588,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -621,7 +629,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mskaline.Nostalgia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -636,7 +644,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mskaline.Nostalgia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

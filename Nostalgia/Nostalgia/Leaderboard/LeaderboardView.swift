@@ -20,14 +20,14 @@ class LeaderboardView: UIView, UITableViewDelegate, UITableViewDataSource
         
         self.backgroundColor = UIColor.clear
         
-        let headerLabel = UILabel.init(frame: CGRect.init(x: 0, y: 40, width: self.frame.size.width, height: 30))
+        let headerLabel = UILabel.init(frame: CGRect.init(x: 0, y: 10, width: self.frame.size.width, height: 30))
         headerLabel.font = UIFont.init(name: "Pixel-Art", size: 22)
         headerLabel.textAlignment = .center
         headerLabel.text = "Leaderboard"
         headerLabel.textColor = UIColor.white
         self.addSubview(headerLabel)
         
-        tableview = UITableView.init(frame: CGRect.init(x: 35, y: 75, width: self.frame.size.width-70, height: self.frame.size.height-110))
+        tableview = UITableView.init(frame: CGRect.init(x: 15, y: 50, width: self.frame.size.width-30, height: self.frame.size.height-65))
         tableview.register(LeaderboardCell.self, forCellReuseIdentifier: "LeaderboardCell")
         //tableview.isScrollEnabled = false
         tableview.backgroundColor = UIColor.clear

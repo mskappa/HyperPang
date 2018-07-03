@@ -15,29 +15,22 @@ protocol GameEventDelegate
     func savePlayerScore(points:Int,nickName:String)
 }
 
-enum CollisionTypes: UInt32
+enum CategoryTypes:UInt32
 {
-    case Rect = 1
-    case Ball = 2
-    case Player = 4
-    case Rope = 8
+    case Rect = 0b10            // 2
+    case Ball = 0b100           // 4
+    case Player = 0b1000       // 8
+    case Rope = 0b10000          // 16
+    case PowerUp = 0b100000     // 32
 }
 
-enum PowerUps:UInt32
+enum CollisionTypes:UInt32
 {
-    case standardWeapon = 0
-    case attachableWeapon = 1
-    case rifleWeapon = 2
-    case barrier = 3
-    case bomb = 4
-    case timeFreezed = 5
-    case timeSlowed = 6
-    case life = 7
+    case None = 0b10            // 4
 }
 
 class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
 {
-    let space:CGFloat = 60
     var player:Player!
     var gameFrame:CGRect!
     var rope:Rope!
@@ -49,21 +42,25 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
     var points:Int = 0
     var pointsLabel:SKLabelNode!
     
+    var currentRopeType:RopeType!
+    
     var gameDelegate:GameEventDelegate!
     
     override func didMove(to view: SKView)
     {
         self.backgroundColor = .clear
         
-        gameFrame = CGRect.init(x: 0, y: 0, width: self.frame.width-space, height: self.frame.height-space)
+        currentRopeType = RopeType.init(rawValue: 0)
+        
+        gameFrame = CGRect.init(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
         setupPointLabel()
         setupLives()
         
         self.physicsWorld.gravity = CGVector.init(dx: 0, dy: -3)
         self.physicsWorld.contactDelegate = self
         
-        let borderView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: gameFrame.width, height: gameFrame.height))
-        borderView.center = (self.view?.center)!
+        let borderView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height))
+        //borderView.center = (self.view?.center)!
         borderView.layer.borderColor = UIColor.white.cgColor
         borderView.layer.borderWidth = 2
         borderView.layer.cornerRadius = 2
@@ -71,11 +68,11 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         
         // Prepare physic frame
         let borders = SKSpriteNode.init(color: .clear, size: gameFrame.size)
-        borders.position = CGPoint.init(x: gameFrame.midX+space/2, y: gameFrame.midY+space/2)
+        borders.position = CGPoint.init(x: 0, y: 0)
         borders.zPosition = 1
         
         // Set physics
-        let rectPath = UIBezierPath.init(rect: CGRect.init(x: space/2, y: space/2, width: gameFrame.width, height: gameFrame.height))
+        let rectPath = UIBezierPath.init(rect: CGRect.init(x:0, y:0, width: gameFrame.width, height: gameFrame.height))
         let pBody = SKPhysicsBody(edgeLoopFrom: rectPath.cgPath)
         self.physicsBody = pBody
         self.physicsBody!.affectedByGravity = false
@@ -86,10 +83,13 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         self.physicsBody!.linearDamping = 0
         self.physicsBody!.angularDamping = 0
         self.physicsBody!.restitution = 0.988
-        self.physicsBody!.categoryBitMask = CollisionTypes.Rect.rawValue
-        self.physicsBody!.collisionBitMask = CollisionTypes.Ball.rawValue
+
+        self.physicsBody!.categoryBitMask = CategoryTypes.Rect.rawValue
+        self.physicsBody!.collisionBitMask = CollisionTypes.None.rawValue
         //self.physicsBody!.contactTestBitMask = CollisionTypes.Ball.rawValue
 
+        //self.physicsBody!.contactTestBitMask = 2
+        
         self.addChild(borders)
         addPlayer()
 
@@ -97,22 +97,23 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         let run = SKAction.run { self.addBall() }
         let sequence = SKAction.sequence([run,wait])
         let forever = SKAction.repeatForever(sequence)
-        self.run(forever)
+        //self.run(forever)
+        
+        addBall()
     }
     
     
     func addPlayer()
     {
         player = Player.init()
-        player.position = CGPoint.init(x: self.frame.midX, y: space/2+player.playerSize.height/2)
+        player.position = CGPoint.init(x: self.frame.midX, y: player.playerSize.height/2)
         self.addChild(player)
+        
+        spawnPowerUp(position: nil)
      }
     
     func addBall()
     {
-        // min ballSize
-        // max self.frame.size.width - ballSize
-        
         let ball = Ball.init(type:BallType.big)
         
         let randomX = arc4random_uniform(UInt32((self.frame.size.width-ball.size.width)-ball.size.width)) + UInt32(ball.size.width)
@@ -120,7 +121,7 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         ball.position = CGPoint.init(x: CGFloat(randomX), y: self.frame.size.height)
         self.addChild(ball)
         
-        let moveTargets = SKAction.moveTo(y: ball.frame.origin.y - ball.size.height/2 - 10, duration: 2.0)
+        let moveTargets = SKAction.moveTo(y: gameFrame.size.height - ball.size.height, duration: 2.0)
         ball.run(moveTargets)
         
         self.perform(#selector(enableBall(ball:)), with: ball, afterDelay: 2.2)
@@ -144,28 +145,41 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         
         if rope != nil
         {
-            if rope.isAttached == false {return}
+            if rope.isAttached == false { print("rope is not yet attached"); return }
             
-            let newAlpha = rope.alpha - 0.34
-            if newAlpha <= 0
+            switch rope.type
             {
-                rope.removeFromParent()
-                rope = nil
-            }
-            else
-            {
-                rope.alpha = newAlpha
-                return
+                case RopeType.standard:
+                    print("standard rope type")
+                
+                case RopeType.attachable:
+                    if rope.isAttached == false
+                    {
+                        return
+                    }
+                    if rope.ropeLives <= 0
+                    {
+                        rope.removeFromParent()
+                    }
+                    else
+                    {
+                        rope.degrade()
+                        return
+                    }
             }
         }
         
-        rope = Rope.init()
+        rope = Rope.init(type:currentRopeType)
+        
         var x = player.position.x - 8
         if player.flipFloat > 0
         {x = player.position.x + 8}
-        rope.position = CGPoint.init(x: x, y: -(gameFrame.height/2) + 10 + player.playerSize.height)
+        let y = -gameFrame.height/2
+        rope.position = CGPoint.init(x: x, y: y)
         self.addChild(rope)
-        rope.shoot(toY: gameFrame.size.height-90)
+        
+        rope.shoot(toY: (gameFrame.height / 2) - 24)
+
     }
     
 
@@ -196,12 +210,19 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
     
     func checkCollisions(a:SKPhysicsBody,b:SKPhysicsBody)
     {
-        if (a.contactTestBitMask == 2 && b.contactTestBitMask == 8)
+        if (a.contactTestBitMask == 32 && b.contactTestBitMask == 8)
         {
             hit()
             return
         }
-        if (a.contactTestBitMask == 8 && b.contactTestBitMask == 8)
+        
+        if (a.contactTestBitMask == 32 && b.contactTestBitMask == 0)
+        {
+            pickPowerUp(pup: b.node!)
+            return
+        }
+        
+        if (a.contactTestBitMask == 4 && b.contactTestBitMask == 8)
         {
             ropeHitten(r:a.node!, ball: b.node!)
             return
@@ -216,17 +237,17 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         if self.isGameOver == true {return}
         if player.isBlinkng == true { return }
         
-        lives = lives - 1
+        // lives = lives - 1
+        
         if lives < 0
         {
             gameOver()
             return
         }
         
-        livesArray[0].removeFromParent()
-        livesArray.remove(at: 0)
+        //livesArray[0].removeFromParent()
+        //livesArray.remove(at: 0)
         
-        print("HIT!")
         player.blink()
     }
     
@@ -246,14 +267,7 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
     
     func splitBalls(splitPostion:CGPoint, ballType:BallType)
     {
-        let rndPowerUpSpawn = arc4random_uniform(10)
-        if rndPowerUpSpawn > 8
-        {
-            print("Spawn Powerup")
-            let rndPowerUp = arc4random_uniform(7)
-            let pup = PowerUps.init(rawValue: rndPowerUp)
-            print(pup)
-        }
+        spawnPowerUp(position: splitPostion)
         
         let nextType = nextBallType(currentType: ballType)
         let ballA = Ball.init(type: nextType)
@@ -286,13 +300,13 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         if direction == Sense.LEFT || direction == Sense.UP_LEFT || direction == Sense.DOWN_LEFT
         {
             // move player left
-            if player.position.x <= 40 { return }
+            if player.position.x <= player.size.width - 7 { return }
             player.move(amount: -2)
         }
         if direction == Sense.RIGHT || direction == Sense.UP_RIGHT || direction == Sense.DOWN_RIGHT
         {
             // move player right
-            if player.position.x >= self.gameFrame.width + 20 { return }
+            if player.position.x >= self.gameFrame.width - player.size.width + 7 { return }
             player.move(amount: 2)
         }
     }
@@ -322,7 +336,7 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         {
             let life = SKSpriteNode.init(color: .clear, size: CGSize.init(width: 15, height: 15))
             life.texture = lifeTexture
-            life.position = CGPoint.init(x: space/2 + gameFrame.width - (spaceMod*CGFloat(i)), y:space/2 + gameFrame.height - spaceMod)
+            life.position = CGPoint.init(x: gameFrame.width - (spaceMod*CGFloat(i)), y: gameFrame.height - spaceMod)
             life.zPosition = 1
             self.addChild(life)
             
@@ -335,7 +349,7 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
     {
         pointsLabel = SKLabelNode(fontNamed: "Pixel-Art")
         self.addPoints(pointsToAdd: 0)
-        pointsLabel.position = CGPoint(x: space/2 + 10, y: space/2 + gameFrame.height - 10)
+        pointsLabel.position = CGPoint(x: 10, y: gameFrame.height - 10)
         pointsLabel.fontColor = UIColor.white
         pointsLabel.horizontalAlignmentMode = .left
         pointsLabel.verticalAlignmentMode = .top
@@ -363,5 +377,54 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
     {
         self.isPaused = true
         guard let _ = gameDelegate?.GameOver(points: points) else {return}
+    }
+}
+
+
+
+extension GameSKcene
+{
+    func pickPowerUp(pup:SKNode)
+    {
+        let powerUp = pup as! PowerUp
+        print("powerup picked \(powerUp.type)")
+        
+        switch powerUp.type
+        {
+            case PowerUps.standardWeapon:
+                currentRopeType = RopeType.standard
+            case PowerUps.attachableWeapon:
+                currentRopeType = RopeType.attachable
+        }
+        powerUp.removeFromParent()
+    }
+    
+    func spawnPowerUp(position:CGPoint!)
+    {
+        let rndPowerUpSpawn = arc4random_uniform(10)
+        if rndPowerUpSpawn < 8
+        {
+            return
+        }
+        
+        let rndPowerUp = arc4random_uniform(2)
+        let rpup = PowerUps.init(rawValue: rndPowerUp)
+        print("Spawn \(String(describing: rpup))")
+
+        let powerUp = PowerUp.init(type: rpup!)
+        
+        if position == nil
+        {
+            // calculate random position
+            let y = gameFrame.height - powerUp.size.height / 2
+            let minX:CGFloat = powerUp.size.width
+            let maxX:CGFloat = gameFrame.width - powerUp.size.width
+            let rndX:CGFloat = CGFloat(arc4random_uniform(UInt32(maxX - minX)) + UInt32(minX))
+            powerUp.position = CGPoint.init(x: rndX, y: y)
+        }
+        else { powerUp.position = position }
+        
+        self.addChild(powerUp)
+        powerUp.fall()
     }
 }

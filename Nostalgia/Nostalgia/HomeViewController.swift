@@ -9,11 +9,11 @@
 import UIKit
 import SpriteKit
 
-class HomeViewController: UIViewController, MainMenuDelegate, GameEventDelegate
+class HomeViewController: UIViewController, GameEventDelegate
 {
     var width:CGFloat = 0.0
     var joystick:JoystickSKcene!
-    var screen:ScreeView!
+    var screen:ScreenView!
     var leaderboardView:LeaderboardView!
     var mainMenuView:MainMenuView!
     var setPlayerName:SetPlayerName!
@@ -23,23 +23,18 @@ class HomeViewController: UIViewController, MainMenuDelegate, GameEventDelegate
     {
         super.viewDidLoad()
         
+        self.view.isMultipleTouchEnabled = true
+        self.view.isExclusiveTouch = false
+        
         width = self.view.frame.size.width - 20
         
         self.drawUI()
+
         self.leaderboardView.refreshData()
-        
         joystick.stick.delegate = mainMenuView
-        
-        self.view.isMultipleTouchEnabled = true
-        self.view.isExclusiveTouch = false
+
         coreData = initCoreData()
     }
-    
-
-
-
-    
-
     
     //
     // MARK: GAME EVENTs DELEGATE
@@ -61,35 +56,25 @@ class HomeViewController: UIViewController, MainMenuDelegate, GameEventDelegate
         screen.contentView.addSubview(setPlayerName)
     }
     
-    func savePlayerScore(points: Int, nickName: String)
-    {
-        print("Save player score \(nickName) : \(points)")
+    //
+    // MARK: UTILITY
+    //
 
-        do
-        {
-            try coreData.operation
-            {
-                (context, save) throws -> Void in
-                
-                let newScore: Scores = try! context.create()
-                newScore.nickname = nickName
-                newScore.score = Int32(points)
-                save()
-                
-                self.leaderboardView.refreshData()
-                self.showLeaderBoard()
-            }
-        }
-        catch
-        {
-            // There was an error in the save operation
-        }
-    }
-    
-    //
-    // MARK: MAIN MENU DELEGATE
-    //
-    
+    override func didReceiveMemoryWarning()
+    {super.didReceiveMemoryWarning()}
+}
+
+
+
+
+
+
+//
+// MARK: MENU ACTIONS + DELEGATE
+//
+
+extension HomeViewController: MainMenuDelegate
+{
     func mainMenuOptionSelected(selectedOption: SelectedOption)
     {
         
@@ -102,18 +87,14 @@ class HomeViewController: UIViewController, MainMenuDelegate, GameEventDelegate
         //print("Option Selected -> \(selectedOption)")
         switch selectedOption
         {
-            case SelectedOption.newGame:
-                newGame()
-            case SelectedOption.leaderboard:
-                showLeaderBoard()
-            case SelectedOption.quit:
-                makeMeCrash()
+        case SelectedOption.newGame:
+            newGame()
+        case SelectedOption.leaderboard:
+            showLeaderBoard()
+        case SelectedOption.quit:
+            makeMeCrash()
         }
     }
-    
-    //
-    // MARK: MENU ACTIONS
-    //
     
     func newGame()
     {
@@ -148,17 +129,64 @@ class HomeViewController: UIViewController, MainMenuDelegate, GameEventDelegate
         // quit
         fatalError()
     }
+}
+
+
+
+
+//
+// MARK: CORE DATA / SAVES
+//
+
+extension HomeViewController
+{
+    func initCoreData() -> CoreDataDefaultStorage
+    {
+        let store = CoreDataStore.named("NostalgiaData")
+        let bundle = Bundle(for: self.classForCoder)
+        let model = CoreDataObjectModel.merged([bundle])
+        let defaultStorage = try! CoreDataDefaultStorage(store: store, model: model)
+        return defaultStorage
+    }
     
-    //
-    // MARK: DRAW UI
-    //
-    
+    func savePlayerScore(points: Int, nickName: String)
+    {
+        print("Save player score \(nickName) : \(points)")
+        
+        do
+        {
+            try coreData.operation
+            {
+                (context, save) throws -> Void in
+                
+                let newScore: Scores = try! context.create()
+                newScore.nickname = nickName
+                newScore.score = Int32(points)
+                save()
+                
+                self.leaderboardView.refreshData()
+                self.showLeaderBoard()
+            }
+        }
+        catch
+        {
+            // There was an error in the save operation
+        }
+    }
+}
+
+//
+// MARK: DRAW UI
+//
+
+extension HomeViewController
+{
     func drawUI()
     {
         drawJoystickView()
         drawScreenView()
-        drawLeaderboard()
         drawMainMenu()
+        drawLeaderboard()
         drawSetPlayerName()
     }
     
@@ -189,47 +217,28 @@ class HomeViewController: UIViewController, MainMenuDelegate, GameEventDelegate
     
     func drawScreenView()
     {
-        let statusBarFix:CGFloat = 15
-        let screenH = (self.view.frame.size.width*3/4) + statusBarFix
-        screen = ScreeView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: screenH))
-        screen.center.x = view.center.x
+        screen = ScreenView.init(width: self.view.frame.size.width)
         self.view.addSubview(screen)
-    }
-    
-    func drawLeaderboard()
-    {
-        let h = (self.view.frame.size.height / 2) - 50
-        leaderboardView = LeaderboardView.init(frame: CGRect.init(x: 0, y: 0, width: width, height: h))
     }
     
     func drawMainMenu()
     {
-        let h = (self.view.frame.size.height / 2) - 50
+        let h = screen.contentView.frame.height
         mainMenuView = MainMenuView.init(frame: CGRect.init(x: 0, y: 0, width: width, height: h))
         mainMenuView.delegate = self
         screen.contentView.addSubview(mainMenuView)
     }
     
+    func drawLeaderboard()
+    {
+        let h = screen.contentView.frame.height
+        leaderboardView = LeaderboardView.init(frame: CGRect.init(x: 0, y: 0, width: width, height: h))
+    }
+    
     func drawSetPlayerName()
     {
-        let h = (self.view.frame.size.height / 2) - 50
+        let h = screen.contentView.frame.height
         setPlayerName = SetPlayerName.init(frame: CGRect.init(x: 0, y: 0, width: width, height: h))
         setPlayerName.delegate = self
     }
-    
-    //
-    // MARK: UTILITY
-    //
-    
-    func initCoreData() -> CoreDataDefaultStorage
-    {
-        let store = CoreDataStore.named("NostalgiaData")
-        let bundle = Bundle(for: self.classForCoder)
-        let model = CoreDataObjectModel.merged([bundle])
-        let defaultStorage = try! CoreDataDefaultStorage(store: store, model: model)
-        return defaultStorage
-    }
-
-    override func didReceiveMemoryWarning()
-    {super.didReceiveMemoryWarning()}
 }

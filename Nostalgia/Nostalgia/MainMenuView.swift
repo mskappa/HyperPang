@@ -34,8 +34,7 @@ class MainMenuView: UIView, SKJoystickDelegate
     {
         super.init(frame: frame)
         
-        let hyperPangLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 240, height: 40))
-        hyperPangLabel.center = CGPoint.init(x: self.center.x, y: self.center.y - 70)
+        let hyperPangLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: frame.width, height: 40))
         hyperPangLabel.font = UIFont.init(name: "Pixel-Art", size: 34)
         hyperPangLabel.backgroundColor = UIColor.clear
         hyperPangLabel.textAlignment = NSTextAlignment.center
@@ -43,12 +42,16 @@ class MainMenuView: UIView, SKJoystickDelegate
         hyperPangLabel.text = "HyperPang"
         self.addSubview(hyperPangLabel)
         
-        let optionsWrapper = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 100))
-        optionsWrapper.center = CGPoint.init(x: self.center.x, y: self.center.y + 20)
+        let optionsWrapperY = hyperPangLabel.frame.origin.y + hyperPangLabel.frame.height + 10
+        let optionsWrapper = UIView.init(frame: CGRect.init(x: 0, y: optionsWrapperY, width: 200, height: 100))
+        optionsWrapper.center.x = self.center.x
+        optionsWrapper.center.y = self.center.y + 5
         optionsWrapper.layer.cornerRadius = 6
         optionsWrapper.layer.borderColor = UIColor.white.cgColor
         optionsWrapper.layer.borderWidth = 2
         self.addSubview(optionsWrapper)
+        
+        hyperPangLabel.frame.origin.y = optionsWrapper.frame.origin.y - hyperPangLabel.frame.height - 10
         
         let newGameLabel = UILabel.init(frame: CGRect.init(x: 30, y: 10, width: optionsWrapper.frame.size.width-40, height: 20))
         newGameLabel.font = UIFont.init(name: "Pixel-Art", size: 22)
@@ -75,8 +78,9 @@ class MainMenuView: UIView, SKJoystickDelegate
         options.append(leaderboardLabel)
         options.append(quitLabel)
         
-        let devLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 240, height: 25))
-        devLabel.center = CGPoint.init(x: self.center.x, y: self.center.y + 95)
+        let devLableY = optionsWrapper.frame.origin.y + optionsWrapper.frame.height + 5
+        let devLabel = UILabel.init(frame: CGRect.init(x: 0, y: devLableY, width: 240, height: 25))
+        devLabel.center.x = self.center.x
         devLabel.font = UIFont.init(name: "Pixel-Art", size: 14)
         devLabel.backgroundColor = UIColor.clear
         devLabel.textAlignment = NSTextAlignment.center
@@ -171,12 +175,6 @@ class MainMenuView: UIView, SKJoystickDelegate
     {
         let selectedOption = getCurrentOption()
         guard let _ = delegate?.mainMenuOptionSelected(selectedOption: selectedOption) else { return }
-      
-        self.pointer.centerYAnchor.constraint(equalTo: <#T##NSLayoutAnchor<NSLayoutYAxisAnchor>#>, constant: <#T##CGFloat#>)
-        
-        self.pointer.heightAnchor.constraint
-        
-        let a = UIImage.init(named: <#T##String#>)
     }
     
     func getCurrentOption() -> SelectedOption

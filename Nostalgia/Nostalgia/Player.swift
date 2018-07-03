@@ -34,11 +34,12 @@ class Player: SKSpriteNode
         self.physicsBody!.angularDamping = 0
         self.physicsBody!.friction = 0
         self.physicsBody?.isDynamic = false
-        self.physicsBody!.mass = 1.0
+        self.physicsBody!.mass = 0
         self.physicsBody!.allowsRotation = false
-        self.physicsBody!.categoryBitMask = CollisionTypes.Player.rawValue
-        //self.physicsBody!.collisionBitMask = 14
-        self.physicsBody!.contactTestBitMask = CollisionTypes.Ball.rawValue
+        
+        self.physicsBody?.categoryBitMask = CategoryTypes.Player.rawValue
+        self.physicsBody?.collisionBitMask = CollisionTypes.None.rawValue
+        self.physicsBody!.contactTestBitMask = CategoryTypes.PowerUp.rawValue
     }
     
     func move(amount:CGFloat)
