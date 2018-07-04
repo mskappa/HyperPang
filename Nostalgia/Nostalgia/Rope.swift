@@ -13,27 +13,53 @@ enum RopeType:Int
 {
     case standard = 0
     case attachable = 1
+    case double = 2
+    case rifle = 3
 }
 
 class Rope: SKSpriteNode
 {
-    let ropeTexture = SKTexture.init(image: UIImage.init(named: "Rope_Launch")!)
-    let attachedRopeTexture = SKTexture.init(image: UIImage.init(named: "Rope_Attached")!)
-    let ropeSize = CGSize.init(width: 10, height: 237)
+    
+    
+    let attachable_rope_texture = SKTexture.init(image: UIImage.init(named: "Rope_Launch")!)
+    let attachable_rope_attached_texture = SKTexture.init(image: UIImage.init(named: "Rope_Attached")!)
+    let rifle_rope_texture = SKTexture.init(image: UIImage.init(named: "LaserRay")!)
+    let standard_rope_size = CGSize.init(width: 10, height: 237)
+    let rifle_rope_size = CGSize.init(width: 10, height: 10)
     var isAttached = false
     var ropeLives = 4
     var type:RopeType
     
     init(type:RopeType)
     {
-        self.type = type
-        super.init(texture: ropeTexture, color: .clear, size: ropeSize)
-        updatePhisicBody()
+        self.type = .double
+        
+        var texture:SKTexture!
+        var size:CGSize!
+        switch self.type
+        {
+            case RopeType.standard:
+                texture = attachable_rope_texture
+                size = standard_rope_size
+            case RopeType.attachable:
+                texture = attachable_rope_texture
+                size = standard_rope_size
+            case RopeType.double:
+                texture = attachable_rope_texture
+                size = standard_rope_size
+            case RopeType.rifle:
+                texture = rifle_rope_texture
+                size = rifle_rope_size
+        }
+        
+        super.init(texture: texture, color: .clear, size: size)
         
         if self.type == .attachable
         {
             startDegrading()
         }
+        
+        updatePhisicBody()
     }
     
     func shoot(toY:CGFloat)
@@ -51,9 +77,25 @@ class Rope: SKSpriteNode
             case RopeType.attachable:
                 self.run(moveAction)
                 {
-                    self.texture = self.attachedRopeTexture
+                    self.texture = self.attachable_rope_attached_texture
                     self.updatePhisicBody()
                     self.isAttached = true
+                }
+            case RopeType.double:
+                print("Shoot whit double rifle")
+                self.isAttached = true
+                self.run(moveAction)
+                {
+                    self.texture = self.attachable_rope_attached_texture
+                    self.updatePhisicBody()
+                }
+            
+            case RopeType.rifle:
+                self.isAttached = true
+                moveAction.duration = 0.5
+                self.run(moveAction)
+                {
+                    self.removeFromParent()
                 }
         }
     }

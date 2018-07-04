@@ -13,7 +13,9 @@ enum PowerUps:UInt32
 {
     case standardWeapon = 0
     case attachableWeapon = 1
-    //case rifleWeapon = 2
+    case doubleWeapon = 2
+    case rifleWeapon = 3
+    //case double weapon
     //case barrier = 3
     //case bomb = 4
     //case timeFreezed = 5
@@ -39,6 +41,10 @@ class PowerUp: SKSpriteNode
                 textureImage = UIImage.init(named: "PowerUp_Standard")!
             case PowerUps.attachableWeapon:
                 textureImage = UIImage.init(named: "PowerUp_Attachable")!
+            case PowerUps.doubleWeapon:
+                textureImage = UIImage.init(named: "PowerUp_Double")!
+            case PowerUps.rifleWeapon:
+                textureImage = UIImage.init(named: "PowerUp_Rifle")!
         }
         
         let pupTexture = SKTexture.init(image: textureImage)
@@ -48,7 +54,7 @@ class PowerUp: SKSpriteNode
         self.zPosition = 1
         
         self.physicsBody = SKPhysicsBody.init(rectangleOf: self.size)
-        self.physicsBody!.affectedByGravity = false
+        self.physicsBody!.affectedByGravity = true
         self.physicsBody!.restitution = 0
         self.physicsBody!.linearDamping = 0
         self.physicsBody!.angularDamping = 0
@@ -62,13 +68,6 @@ class PowerUp: SKSpriteNode
         //self.physicsBody!.contactTestBitMask = CategoryTypes.Player.rawValue
         
         self.startDegrading()
-    }
-    
-    func fall()
-    {
-        self.blinkTwoSeconds()
-        let moveAction = SKAction.moveTo(y:(self.size.height/2)+2, duration: 2.0)
-        self.run(moveAction)
     }
     
     func startDegrading()

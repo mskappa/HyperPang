@@ -166,19 +166,40 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
                         rope.degrade()
                         return
                     }
+                case RopeType.double:
+                    var x = 0
+                    for node in self.children
+                    {
+                        if node.name == "name"
+                        {
+                            x = x + 1
+                        }
+                    }
+                    print("double rope tiype - \(x)")
+
+                case RopeType.rifle:
+                    print("rifle rope tiype")
             }
         }
         
         rope = Rope.init(type:currentRopeType)
         
         var x = player.position.x - 8
+        var y = -gameFrame.height/2
+        var target = (gameFrame.height / 2) - 24
+        
         if player.flipFloat > 0
         {x = player.position.x + 8}
-        let y = -gameFrame.height/2
+        
+        if rope.type == .rifle
+        {y = player.size.height
+        target = gameFrame.height}
+        
         rope.position = CGPoint.init(x: x, y: y)
+        rope.name = "rope"
         self.addChild(rope)
         
-        rope.shoot(toY: (gameFrame.height / 2) - 24)
+        rope.shoot(toY: target)
 
     }
     
@@ -395,6 +416,10 @@ extension GameSKcene
                 currentRopeType = RopeType.standard
             case PowerUps.attachableWeapon:
                 currentRopeType = RopeType.attachable
+            case PowerUps.doubleWeapon:
+                currentRopeType = RopeType.double
+            case PowerUps.rifleWeapon:
+                currentRopeType = RopeType.rifle
         }
         powerUp.removeFromParent()
     }
@@ -407,7 +432,7 @@ extension GameSKcene
             return
         }
         
-        let rndPowerUp = arc4random_uniform(2)
+        let rndPowerUp = arc4random_uniform(4)
         let rpup = PowerUps.init(rawValue: rndPowerUp)
         print("Spawn \(String(describing: rpup))")
 
@@ -425,6 +450,5 @@ extension GameSKcene
         else { powerUp.position = position }
         
         self.addChild(powerUp)
-        powerUp.fall()
     }
 }
