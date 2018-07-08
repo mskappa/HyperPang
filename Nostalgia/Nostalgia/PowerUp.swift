@@ -54,7 +54,7 @@ class PowerUp: SKSpriteNode
         self.zPosition = 1
         
         self.physicsBody = SKPhysicsBody.init(rectangleOf: self.size)
-        self.physicsBody!.affectedByGravity = true
+        self.physicsBody!.affectedByGravity = false
         self.physicsBody!.restitution = 0
         self.physicsBody!.linearDamping = 0
         self.physicsBody!.angularDamping = 0
@@ -89,6 +89,21 @@ class PowerUp: SKSpriteNode
         if lifeSeconds <= 0
         {
             self.removeFromParent()
+        }
+    }
+    
+    func fall(fromYPosition:CGFloat)
+    {
+        let time:CGFloat = 1.0
+        let targetY:CGFloat = self.frame.height-5
+        let diff = fromYPosition - targetY
+        let r:CGFloat = diff / fromYPosition
+        let ct:CGFloat = r * time
+        
+        let moveAction = SKAction.moveTo(y:self.frame.height-5, duration: TimeInterval(ct))
+        self.run(moveAction)
+        {
+
         }
     }
     

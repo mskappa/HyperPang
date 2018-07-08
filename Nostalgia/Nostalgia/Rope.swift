@@ -32,7 +32,7 @@ class Rope: SKSpriteNode
     
     init(type:RopeType)
     {
-        self.type = .double
+        self.type = type
         
         var texture:SKTexture!
         var size:CGSize!
@@ -86,8 +86,8 @@ class Rope: SKSpriteNode
                 self.isAttached = true
                 self.run(moveAction)
                 {
-                    self.texture = self.attachable_rope_attached_texture
-                    self.updatePhisicBody()
+                    self.isAttached = true
+                    self.removeFromParent()
                 }
             
             case RopeType.rifle:

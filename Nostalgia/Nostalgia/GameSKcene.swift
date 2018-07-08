@@ -86,9 +86,6 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
 
         self.physicsBody!.categoryBitMask = CategoryTypes.Rect.rawValue
         self.physicsBody!.collisionBitMask = CollisionTypes.None.rawValue
-        //self.physicsBody!.contactTestBitMask = CollisionTypes.Ball.rawValue
-
-        //self.physicsBody!.contactTestBitMask = 2
         
         self.addChild(borders)
         addPlayer()
@@ -97,9 +94,9 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
         let run = SKAction.run { self.addBall() }
         let sequence = SKAction.sequence([run,wait])
         let forever = SKAction.repeatForever(sequence)
-        //self.run(forever)
+        self.run(forever)
         
-        addBall()
+        //addBall()
     }
     
     
@@ -170,12 +167,12 @@ class GameSKcene: SKScene, SKJoystickDelegate,SKPhysicsContactDelegate
                     var x = 0
                     for node in self.children
                     {
-                        if node.name == "name"
+                        if node.name == "rope"
                         {
                             x = x + 1
                         }
                     }
-                    print("double rope tiype - \(x)")
+                    if x >= 2 {return}
 
                 case RopeType.rifle:
                     print("rifle rope tiype")
@@ -450,5 +447,6 @@ extension GameSKcene
         else { powerUp.position = position }
         
         self.addChild(powerUp)
+        powerUp.fall(fromYPosition: powerUp.frame.origin.y)
     }
 }
